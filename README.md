@@ -8,9 +8,12 @@
     Sign.vue; // Canvas签名
     ```
   - directives
-    ```javascript
-    longPress.ts; // 长按(v-long-press="fn" or v-long-press="() => fn(param)"<with param>)
     ```
-    ```javascript
-    debouce.ts; // 防抖(v-debounce="fn")
+    longPress.ts // 长按(v-long-press="fn" or v-long-press="() => fn(param)"<with param>)
+    ```
+    ```
+    debouce.ts // 防抖(v-debounce="fn")
+    ```
+    ```
+    throttle.ts // 节流(v-throttle="fn")
     ```
