@@ -3,22 +3,21 @@ export default {
   beforeMount() {},
   mounted(el: HTMLElement, { value }: { value: Function }) {
     if (typeof value !== 'function') {
-      throw new Error("The v-debouce event is bound to an event");
+      throw new Error("v-throttle: Error Type!(Must be a Function.)");
     }
-
-    let throttle = (delay: number = 300) => {
-      let timer: number = 0,
-        preTime: number = 0
+    el['timer'] = null
+    el['_throttle'] = (delay: number = 300) => {
+      let preTime: number = 0
       return () => {
         let currentTime = +Date.now()
         
         if (currentTime - preTime < delay) {
-          clearTimeout(timer)
-          timer = setTimeout(() => {
+          clearTimeout(el['timer'])
+          el['timer'] = setTimeout(() => {
             value()
             preTime = currentTime
-            clearTimeout(timer)
-            timer = 0
+            clearTimeout(el['timer'])
+            el['timer'] = null
           }, delay)
         } else {
           value()
@@ -27,11 +26,16 @@ export default {
       }
     }
 
-    el.addEventListener('mousemove', throttle())
+    el.addEventListener('mousemove', el['_throttle']())
     
   },
   beforeUpdate() { },
   updated() { },
-  beforeUnmount() { },
+  beforeUnmount(el: HTMLElement) {
+    el.removeEventListener('mousemove', el['_throttle']())
+    
+    clearTimeout(el['timer'])
+    el['timer'] = null
+  },
   unMounted() { }
 }

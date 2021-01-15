@@ -1,22 +1,27 @@
 export default {
   mounted(el: HTMLElement, { value }: { value: Function }) {
     if (typeof value !== 'function') {
-      throw new Error("The v-debouce event is bound to an event");
+      throw new Error("v-debounce: Error Type!(Must be a Function.)");
     }
 
-    let timer: number = 0
-    let start = (e: MouseEvent | TouchEvent) => {
-      if (timer) {
-        timer && clearTimeout(timer)
-        timer = 0
+    el['timer'] = null
+    el['start'] = (e: MouseEvent | TouchEvent) => {
+      if (el['timer']) {
+        el['timer'] && clearTimeout(el['timer'])
+        el['timer'] = 0
       }
-      timer = setTimeout(() => {
+      el['timer'] = setTimeout(() => {
         value(e)
       }, 300)
     }
 
-    el.addEventListener('click', start)
+    el.addEventListener('click', el['start'])
   },
   updated() { },
-  unMounted() { }
+  beforeUnmount(el: HTMLElement) {
+    el.removeEventListener('click', el['start'])
+
+    clearTimeout(el['timer'])
+    el['timer'] = null
+  }
 }
