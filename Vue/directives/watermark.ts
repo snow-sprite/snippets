@@ -18,7 +18,14 @@ export default {
       el['_ctx'].font = `${value['font'] || '48px'} MicrosoftYaHei, PingFangSC`
       el['_ctx'].translate(el['_canvas']['width'] / 2, el['_canvas']['height'] / 2)
       el['_ctx'].textAlign = 'center'
-      el['_ctx'].rotate(-40 * Math.PI / 180)
+      
+      // rotate可能会为0
+      if (value['rotate'] !== null && value['rotate'] !== undefined) {
+        el['_ctx'].rotate(+value['rotate'] * Math.PI / 180)
+      } else {
+        el['_ctx'].rotate(-40 * Math.PI / 180)
+      }
+      
       el['_ctx'].strokeStyle = value['color'] || 'rgba(100, 100, 100, .2)'
       el['_ctx'].fillStyle = value['color'] || 'rgba(100, 100, 100, .2)'
       el['_ctx'].strokeText(value['text'] || value || '@Cid', 0, 0, el['_canvas']['width'])
