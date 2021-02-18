@@ -31,3 +31,7 @@
   - NavSlideLeft.vue; // 导航下划线一直是从左下角开始往右滑动的
 
     - ![预览](https://github.com/snow-sprite/snippets/raw/main/demo/left.gif?raw=true)
+
+  - Cards.vue; // 卡片鼠标悬浮上移，窄屏`css`兼容
+
+    - ![预览](https://github.com/snow-sprite/snippets/raw/main/demo/cards.gif?raw=true)
