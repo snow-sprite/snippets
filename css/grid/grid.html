@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>grid</title>
+</head>
+<style>
+  .wraper {
+    margin: 0 auto;
+    width: 1400px;
+    height: 1000px;
+    background: #ddf5ff;
+    display: grid;
+
+    /* grid-template-rows: 200px 200px;
+    grid-template-columns: 200px 200px 200px; */
+    grid-template-rows: repeat(3, 200px);
+    grid-template-columns: repeat(5, 200px);
+    justify-content: center;
+    align-content: center;
+    /* justify-items: center; */
+    /* align-items: center; */
+    /* 重复某种规则2次 */
+    /* grid-template-columns: repeat(2, 100px 20px 80px); */
+
+    /* auto-fill自动填充父容器剩余部分，类似flex布局的flex-wrap: wrap; */
+    /* grid-template-columns: repeat(auto-fill, 200px); */
+
+    /* fr */
+    /* grid-template-columns: 1fr 1fr 1fr; */
+    /* fr第三列的宽度是第二列的2倍 */
+    /* grid-template-columns: 150px 1fr 2fr; */
+
+  }
+
+  .one {
+    background: #19CAAD;
+    grid-row-start: 1;
+    grid-row-end: 2;
+    grid-column-start: 3;
+    grid-column-end: 4;
+  }
+
+  .two {
+    background: #8CC7B5;
+    grid-row-start: 2;
+    grid-row-end: 3;
+    grid-column-start: 2;
+    grid-column-end: 3;
+  }
+
+  .three {
+    background: #D1BA74;
+    grid-row-start: 2;
+    grid-row-end: 3;
+    grid-column-start: 4;
+    grid-column-end: 5;
+  }
+
+  .four {
+    background: #BEE7E9;
+    grid-row-start: 3;
+    grid-row-end: 4;
+    grid-column-start: 1;
+    grid-column-end: 2;
+  }
+
+  .five {
+    background: #E6CEAC;
+    grid-row-start: 3;
+    grid-row-end: 4;
+    grid-column-start: 3;
+    grid-column-end: 4;
+  }
+
+  .six {
+    background: #ECAD9E;
+    grid-row-start: 3;
+    grid-row-end: 4;
+    grid-column-start: 5;
+    grid-column-end: 6;
+  }
+
+  .center {
+    color: #fff;
+    font-size: 58px;
+    text-align: center;
+    line-height: 200px;
+  }
+</style>
+
+<body>
+  <div class="wraper">
+    <div class="one center">A</div>
+    <div class="two center">B</div>
+    <div class="three center">C</div>
+    <div class="four center">D</div>
+    <div class="five center">E</div>
+    <div class="six center">F</div>
+  </div>
+</body>
+
+</html>
