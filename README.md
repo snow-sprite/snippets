@@ -25,13 +25,14 @@
 - css
 
   - NavSlide.vue; // 导航下划线（with bug：第一个 nav 第一次悬浮的时候下划线是从右边开始的）
-
-    - ![预览](https://github.com/snow-sprite/snippets/raw/main/demo/left-right.gif?raw=true)
+  [预览](https://github.com/snow-sprite/snippets/raw/main/dist/demo/left-right.gif?raw=true)
 
   - NavSlideLeft.vue; // 导航下划线一直是从左下角开始往右滑动的
-
-    - ![预览](https://github.com/snow-sprite/snippets/raw/main/demo/left.gif?raw=true)
+  [预览](https://github.com/snow-sprite/snippets/raw/main/dist/demo/left.gif?raw=true)
 
   - Cards.vue; // 卡片鼠标悬浮上移，窄屏`css`兼容
+  [预览](https://github.com/snow-sprite/snippets/raw/main/dist/demo/cards.gif?raw=true)
 
-    - ![预览](https://github.com/snow-sprite/snippets/raw/main/demo/cards.gif?raw=true)
+  - grid布局
+
+  - shape-outside && clip-path内容根据自定义规则形状显示，超出隐藏

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文字环绕图形</title>
+  <style>
+    body {
+      background: #e0f6ff;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .wrapper {
+      margin: 150px auto;
+      width: 500px;
+      height: 200px;
+      background: aquamarine;
+      clip-path: polygon(20% 0, 100% 0, 80% 100%, 0 100%);
+    }
+
+    .left,
+    .right {
+      width: 20%;
+      height: 100%;
+    }
+
+    .left {
+      /* background: violet; */
+      shape-outside: polygon(100% 0, 0 100%, 0 0);
+      /* 配合浮动使之脱离标准文档流 */
+      float: left;
+    }
+
+    .right {
+      /* background: slateblue; */
+      shape-outside: polygon(100% 0, 100% 100%, 0 100%);
+      /* shape-outside: polygon(0 0, 100% 0, 100% 100%, 0 100%, 100% 50%); */
+      /* 配合浮动使之脱离标准文档流 */
+      float: right;
+    }
+
+    .box {
+      margin: 0 auto;
+      width: 300px;
+      height: 300px;
+      background: coral;
+      clip-path: polygon(50% 0%, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0% 50%, 40% 40%);
+      animation: 4s trans infinite alternate ease-in-out;
+      transform-origin: center;
+    }
+
+    @keyframes trans {
+      from {
+        clip-path: polygon(50% 0%, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0% 50%, 40% 40%);
+      }
+
+      to {
+        clip-path: polygon(50% 30%, 100% 0%, 70% 50%, 100% 100%, 50% 70%, 0% 100%, 30% 50%, 0% 0%);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <h2 class="center">实现一个平行四边形内显示文字</h2>
+  <li class="center"><b>shape-outside</b>用来定义环绕的形状方式</li>
+  <li class="center"><b>clip-path</b>用来裁切显示的区域，未在裁切区域的部分会被隐藏</li>
+  <div class="wrapper">
+    <div class="left"></div>
+    <div class="right"></div>
+    <!-- 文字需放在最后 -->
+    <p>
+      <a href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/shape-outside">官网链接</a>
+      shape-outside的CSS 属性定义了一个可以是非矩形的形状，相邻的内联内容应围绕该形状进行包装。 默认情况下，内联内容包围其边距框;
+      shape-outside提供了一种自定义此包装的方法，可以将文本包装在复杂对象周围而不是简单的框中。shape-outside
+      属性指定使用下面列表的值来定义浮动元素的浮动区域。这个浮动区域决定了行内内容（浮动元素）所包裹的形状。
+    </p>
+  </div>
+
+  <h2 class="center">clip-path任意变换图形：四角星</h2>
+  <div class="box"></div>
+</body>
+
+</html>
