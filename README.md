@@ -34,5 +34,7 @@
   [预览](https://github.com/snow-sprite/snippets/raw/main/docs/demo/cards.gif?raw=true)
 
   - grid布局
+  [预览](https://snow-sprite.github.io/snippets/grid/grid.html)
 
   - shape-outside && clip-path内容根据自定义规则形状显示，超出隐藏
+  [预览](https://snow-sprite.github.io/snippets/shape/shape-outside.html)
