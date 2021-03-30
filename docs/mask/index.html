@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>mask</title>
+  <style>
+    #mask {
+      position: relative;
+      width: 1000px;
+      height: 500px;
+      background: url(https://github.com/snow-sprite/snippets/raw/main/docs/mask/imgs/dog.png?raw=true) no-repeat center;
+    }
+
+    .wrapper {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1000px;
+      height: 500px;
+      overflow: hidden;
+      mask: url(https://github.com/snow-sprite/snippets/raw/main/docs/mask/imgs/mask.png?raw=true) no-repeat 0 0 / 1000px 500px;
+      -webkit-mask: url(https://github.com/snow-sprite/snippets/raw/main/docs/mask/imgs/mask.png?raw=true) no-repeat 0 0 / 1000px 500px;
+    }
+
+    p {
+      width: 150px;
+      height: 15px;
+      margin-left: calc(100% + 150px);
+    }
+
+    .li1 {
+      animation: move 8s 4s infinite linear;
+    }
+
+    .li2 {
+      animation: move 8s 7s infinite linear;
+    }
+
+    .li3 {
+      animation: move 8s 1s infinite linear;
+    }
+
+    .li4 {
+      animation: move 8s 3s infinite linear;
+    }
+
+    .li5 {
+      animation: move 8s 0s infinite linear;
+    }
+
+    .li6 {
+      animation: move 8s 6s infinite linear;
+    }
+
+    .li7 {
+      animation: move 8s 1s infinite linear;
+    }
+
+    .li8 {
+      animation: move 8s 9s infinite linear;
+    }
+
+    .li9 {
+      animation: move 8s 2s infinite linear;
+    }
+
+    .li5 {
+      animation: move 8s 0s infinite linear;
+    }
+
+    .li6 {
+      animation: move 8s 6s infinite linear;
+    }
+
+    .li7 {
+      animation: move 8s 1s infinite linear;
+    }
+
+    .li8 {
+      animation: move 8s 9s infinite linear;
+    }
+
+    .li9 {
+      animation: move 8s 2s infinite linear;
+    }
+
+    @keyframes move {
+      from {
+        margin-left: calc(100% + 150px);
+      }
+
+      to {
+        margin-left: -150px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="mask"></div>
+  <div class="wrapper">
+    <p class="li1">li66666666666666</p>
+    <p class="li2">li66666666666666</p>
+    <p class="li3">li66666666666666</p>
+    <p class="li4">li66666666666666</p>
+    <p class="li5">li66666666666666</p>
+    <p class="li6">li66666666666666</p>
+    <p class="li7">li66666666666666</p>
+    <p class="li8">li66666666666666</p>
+    <p class="li9">li66666666666666</p>
+    <p class="li5">li66666666666666</p>
+    <p class="li6">li66666666666666</p>
+    <p class="li7">li66666666666666</p>
+    <p class="li8">li66666666666666</p>
+    <p class="li9">li66666666666666</p>
+  </div>
+</body>
+
+</html>
