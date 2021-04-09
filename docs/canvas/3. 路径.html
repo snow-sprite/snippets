@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>绘制路径</title>
+</head>
+
+<body>
+  <canvas></canvas>
+</body>
+<script>
+  const canvas = document.querySelector('canvas')
+  canvas.width = 500
+  canvas.height = 500
+  const ctx = canvas.getContext('2d')
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  ctx.fillStyle = 'skyblue'
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+  ctx.beginPath()
+  ctx.moveTo(175, 75)
+  ctx.lineTo(30, 30)
+  ctx.strokeStyle = 'red'
+  ctx.lineWidth = 3
+  ctx.stroke()
+
+  ctx.beginPath()
+  ctx.moveTo(275, 75)
+  ctx.lineTo(470, 30)
+  ctx.strokeStyle = 'brown'
+  ctx.lineWidth = 3
+  ctx.stroke()
+
+  ctx.beginPath()
+  ctx.moveTo(75, 175)
+  ctx.lineTo(125, 115)
+  ctx.lineTo(175, 175)
+  ctx.strokeStyle = 'green'
+  ctx.stroke()
+
+  ctx.beginPath()
+  ctx.moveTo(275, 175)
+  ctx.lineTo(325, 115)
+  ctx.lineTo(375, 175)
+  ctx.strokeStyle = 'yellow'
+  ctx.stroke()
+
+  ctx.beginPath()
+  ctx.moveTo(75, 275)
+  ctx.lineTo(75, 375)
+  ctx.lineTo(375, 375)
+  ctx.strokeStyle = 'blue'
+  ctx.stroke()
+
+  ctx.beginPath()
+  ctx.moveTo(95, 275)
+  ctx.lineTo(395, 275)
+  ctx.lineTo(395, 375)
+  ctx.strokeStyle = 'orange'
+  ctx.closePath() // 闭合图形（终点与起点相连）
+  ctx.stroke()
+</script>
+
+</html>

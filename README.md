@@ -38,3 +38,11 @@
 
   - shape-outside && clip-path内容根据自定义规则形状显示，超出隐藏
   [预览](https://snow-sprite.github.io/snippets/shape/shape-outside.html)
+
+- canvas
+  - 绘制矩形 // strokeRect无填充
+  [预览](https://snow-sprite.github.io/snippets/grid/1. strokeRect.html)
+  - 绘制填充矩形 // fillRect填充
+  [预览](https://snow-sprite.github.io/snippets/grid/2. fillRect.html)
+  - 绘制路径
+  [预览](https://snow-sprite.github.io/snippets/grid/3. 路径.html)

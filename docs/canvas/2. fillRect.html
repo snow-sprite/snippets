@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>fillRect</title>
+  <style>
+    canvas {
+      position: relative;
+      left: 50%;
+      transform: translate(-50%, 0%);
+    }
+  </style>
+</head>
+
+<body>
+  <h1>fillRect()方法用来绘制一个矩形（填充），后绘制的会覆盖先前绘制的。</h1>
+  <li>
+    <strong style="color: chocolate;">ctx.fillRect(x, y, width, height)</strong>
+  </li>
+  <li>
+    <strong>通过fillRect方法，更加直观的看到后绘制的覆盖先前绘制的。</strong>
+  </li>
+  <canvas></canvas>
+  <br>
+  <h1>绘制一个调色器面板</h1>
+  <canvas class="canvas2"></canvas>
+</body>
+<script>
+  const canvas = document.querySelector('canvas')
+  const ctx = canvas.getContext('2d')
+
+  canvas.width = 300 // 默认宽度300
+  canvas.height = 150 //　默认高度150
+
+  ctx.fillStyle = 'skyblue'
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+  /* 背景线条 -> 辅助作用—————————————— */
+  const gap = 30 // 间隙30
+  for (let i = 1; i < canvas.height / 30; i++) {
+    ctx.moveTo(0, 30 * i)
+    ctx.lineTo(canvas.width, 30 * i)
+    ctx.strokeStyle = '#fff'
+    ctx.lineWidth = 1
+    ctx.stroke()
+  }
+  for (let i = 1; i < canvas.width / 30; i++) {
+    ctx.moveTo(30 * i, 0)
+    ctx.lineTo(30 * i, canvas.height)
+    ctx.strokeStyle = '#fff'
+    ctx.lineWidth = 1
+    ctx.stroke()
+  }
+  /* ——————————————背景线条 -> 辅助作用 */
+
+  // 绘制矩形
+  ctx.lineWidth = 3
+  ctx.fillStyle = 'red'
+  ctx.fillRect(0, 0, 270, 120)
+
+  ctx.fillStyle = 'green'
+  ctx.fillRect(30, 30, 270, 60)
+
+  ctx.fillStyle = 'orange'
+  ctx.fillRect(60, 0, 120, 120)
+
+  // 调色器 10 * 10的面板
+  const canvas2 = document.querySelector('.canvas2')
+  const ctx2 = canvas2.getContext('2d')
+  canvas2.width = 300
+  canvas2.height = 300
+
+
+  const step = 300 / 10
+  const colorStep = 255 / 10
+  for (let i = 0; i < 10; i++) {
+    for (let j = 0; j < 10; j++) {
+      ctx2.fillStyle = `rgb(${Math.floor(255 - colorStep*i)}, ${Math.floor(255 - colorStep * j)}, 0)`
+      ctx2.fillRect(step * j, step * i, step, step)
+    }
+  }
+</script>
+
+</html>

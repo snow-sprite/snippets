@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>strokeRect</title>
+  <style>
+    canvas {
+      position: relative;
+      left: 50%;
+      transform: translate(-50%, 50%);
+    }
+  </style>
+</head>
+
+<body>
+  <h1>strokeRect()方法用来绘制一个矩形（无填充），后绘制的会覆盖先前绘制的。</h1>
+  <li>
+    <strong style="color: chocolate;">ctx.strokeRect(x, y, width, height)</strong>
+  </li>
+  <canvas></canvas>
+</body>
+<script>
+  const canvas = document.querySelector('canvas')
+  const ctx = canvas.getContext('2d')
+
+  ctx.width = 300 // 默认宽度300
+  ctx.height = 150 //　默认高度150
+
+  ctx.fillStyle = 'skyblue'
+  ctx.fillRect(0, 0, ctx.width, ctx.height)
+
+  /* 背景线条 -> 辅助作用—————————————— */
+  const gap = 30 // 间隙30
+  for (let i = 1; i < ctx.height / 30; i++) {
+    ctx.moveTo(0, 30 * i)
+    ctx.lineTo(ctx.width, 30 * i)
+    ctx.strokeStyle = '#fff'
+    ctx.lineWidth = 1
+    ctx.stroke()
+  }
+  for (let i = 1; i < ctx.width / 30; i++) {
+    ctx.moveTo(30 * i, 0)
+    ctx.lineTo(30 * i, ctx.height)
+    ctx.strokeStyle = '#fff'
+    ctx.lineWidth = 1
+    ctx.stroke()
+  }
+  /* ——————————————背景线条 -> 辅助作用 */
+
+  // 绘制矩形
+  ctx.lineWidth = 3
+  ctx.strokeStyle = 'red'
+  ctx.strokeRect(0, 0, 270, 120)
+
+  ctx.strokeStyle = 'green'
+  ctx.strokeRect(30, 30, 270, 60)
+
+  ctx.strokeStyle = 'orange'
+  ctx.strokeRect(60, 0, 120, 120)
+</script>
+
+</html>
