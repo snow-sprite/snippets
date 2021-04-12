@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>arc</title>
+  <style>
+    canvas {
+      position: relative;
+      left: 50%;
+      transform: translate(-50%, 0%);
+    }
+  </style>
+</head>
+
+<body>
+  <h1>arc方法用来绘制一段圆弧或者圆</h1>
+  <li>
+    <strong style="color: chocolate;">ctx.arc(x, y, r, startAngle, endAngle)</strong>
+  </li>
+  <i>startAngle:起始角度，默认x轴是0度</i>
+  <li>
+    <strong>绘制圆弧。</strong>
+  </li>
+  <canvas></canvas>
+</body>
+<script>
+  const canvas = document.querySelector('canvas')
+  const ctx = canvas.getContext('2d')
+
+  canvas.width = 300 // 默认宽度300
+  canvas.height = 300 //　默认高度150
+
+  ctx.fillStyle = 'skyblue'
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+  /* 背景线条 -> 辅助作用—————————————— */
+  const gap = 30 // 间隙30
+  for (let i = 1; i < canvas.height / 30; i++) {
+    ctx.moveTo(0, 30 * i)
+    ctx.lineTo(canvas.width, 30 * i)
+    ctx.strokeStyle = '#fff'
+    ctx.lineWidth = 1
+    ctx.stroke()
+  }
+  for (let i = 1; i < canvas.width / 30; i++) {
+    ctx.moveTo(30 * i, 0)
+    ctx.lineTo(30 * i, canvas.height)
+    ctx.strokeStyle = '#fff'
+    ctx.lineWidth = 1
+    ctx.stroke()
+  }
+  /* ——————————————背景线条 -> 辅助作用 */
+  ctx.beginPath()
+  ctx.lineWidth = 4
+  ctx.strokeStyle = 'red'
+  ctx.arc(90, 90, 80, -90 * Math.PI / 180, 180 * Math.PI / 180)
+  ctx.stroke()
+
+  ctx.beginPath()
+  ctx.lineWidth = 3
+  ctx.strokeStyle = 'red'
+  ctx.moveTo(90, 90)
+  ctx.lineTo(10, 90)
+  ctx.stroke()
+
+  ctx.beginPath()
+  ctx.lineWidth = 4
+  ctx.strokeStyle = 'yellow'
+  ctx.arc(120, 240, 50, -90 * Math.PI / 180, 90 * Math.PI / 180)
+  ctx.stroke()
+
+  ctx.beginPath()
+  ctx.lineWidth = 3
+  ctx.strokeStyle = 'yellow'
+  ctx.moveTo(120, 240)
+  ctx.lineTo(120, 290)
+  ctx.stroke()
+
+  ctx.beginPath()
+  ctx.lineWidth = 4
+  ctx.strokeStyle = 'green'
+  ctx.arc(240, 240, 50, -90 * Math.PI / 180, 0 * Math.PI / 180)
+  ctx.stroke()
+
+  ctx.beginPath()
+  ctx.lineWidth = 3
+  ctx.strokeStyle = 'green'
+  ctx.moveTo(240, 240)
+  ctx.lineTo(290, 240)
+  ctx.stroke()
+</script>
+
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>画虚线</title>
+</head>
+
+<body>
+  <li>
+    <h1>ctx.setLineDash() 用于设置虚线样式，语法为ctx.setLineDash(segments)</h1>
+    <h3>segments:一个数组，一组描述交替绘制线段和间距（坐标空间单位）长度的数字</h3>
+    <h5>例如：[50, 10, 30, 20]，会描述成线段长度50，间隙长度10，线段长度再30，间隙长度再20这样交替下去</h5>
+    <h3>如果segments的长度是奇数，数组的元素会被复制并重复。Canvas 会发现奇数没法交替出现，因为会出现 黑白黑黑白黑.. 中间重叠了两个 黑 ,于是它就会把数组复制一遍变成 [1,2,3,1,2,3]
+      好了，这样就可以交替出现了</h3>
+    <h5>例如：[1, 2, 3] => [1 ,2, 3, 1, 2, 3]</h5>
+  </li>
+  <canvas></canvas>
+</body>
+<script>
+  const canvas = document.querySelector('canvas')
+  const ctx = canvas.getContext('2d')
+
+  canvas.width = document.body.offsetWidth
+  canvas.height = 500
+
+
+  ctx.fillStyle = 'skyblue'
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+  // 第一根
+  ctx.lineWidth = 40
+  ctx.setLineDash([10, 20, 30])
+  ctx.strokeStyle = 'red'
+  ctx.moveTo(0, 80)
+  ctx.lineTo(canvas.width, 80)
+  ctx.stroke()
+
+  // 第二根
+  ctx.beginPath()
+  ctx.setLineDash([50, 10, 20])
+  ctx.strokeStyle = 'green'
+  ctx.moveTo(0, 160)
+  ctx.lineTo(canvas.width, 160)
+  ctx.stroke()
+
+  // 第三根
+  ctx.beginPath()
+  ctx.strokeStyle = 'blue'
+  ctx.setLineDash([6, 10, 14])
+  ctx.moveTo(0, 240)
+  ctx.lineTo(canvas.width, 240)
+  ctx.stroke()
+
+  // 第四根
+  ctx.beginPath()
+  ctx.strokeStyle = 'yellow'
+  ctx.setLineDash([40, 40])
+  ctx.moveTo(0, 320)
+  ctx.lineTo(canvas.width, 320)
+  ctx.stroke()
+
+  // 分割线
+  ctx.beginPath()
+  ctx.strokeStyle = '#666'
+  // 这里切换回实线，不然一直是虚线
+  ctx.setLineDash([])
+  ctx.lineWidth = 2
+  ctx.moveTo(0, 400)
+  ctx.lineTo(canvas.width, 400)
+  ctx.stroke()
+
+  // 第五根
+  ctx.beginPath()
+  ctx.lineWidth = 20
+  ctx.strokeStyle = 'hotpink'
+  ctx.moveTo(20, 450)
+  ctx.lineTo(canvas.width - 20, 450)
+  // 设置线末端样式，默认'butt', 还可以设置'round', 'square' // https://www.twle.cn/l/yufei/canvas/canvas-basic-path-linecap.html
+  ctx.lineCap = 'round'
+  ctx.stroke()
+</script>
+
+</html>

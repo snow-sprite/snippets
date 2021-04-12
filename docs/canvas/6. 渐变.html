@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>线性渐变&径向渐变</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas></canvas>
+</body>
+<script>
+  const canvas = document.querySelector('canvas')
+  const ctx = canvas.getContext('2d')
+
+  canvas.width = document.body.offsetWidth
+  canvas.height = document.body.offsetHeight
+  ctx.fillStyle = 'skyblue'
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+  // 线性渐变
+  const linearGradient = ctx.createLinearGradient(0, 0, 300, 150)
+  linearGradient.addColorStop(0, 'hotpink')
+  linearGradient.addColorStop(0.25, 'blue')
+  linearGradient.addColorStop(0.5, 'red')
+  linearGradient.addColorStop(0.75, 'green')
+  linearGradient.addColorStop(1, 'purple')
+
+  ctx.fillStyle = linearGradient
+  ctx.fillRect(0, 0, 500, 250)
+
+  // 镜像渐变
+  const radialGradient = ctx.createRadialGradient(canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas
+    .height / 2, 200)
+  radialGradient.addColorStop(0, 'blue')
+  radialGradient.addColorStop(.5, 'red')
+  radialGradient.addColorStop(1, 'green')
+  ctx.fillStyle = radialGradient
+  ctx.fillRect(canvas.width / 2 - 200, canvas.height / 2 - 200, 400, 400)
+</script>
+
+</html>

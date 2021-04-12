@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文字</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>
+    <li>Canvas 填充文字： fillText()</li>
+  </h2>
+  <h2>
+    <li>Canvas 预测文本宽度： measureText()<i>，目前只有width属性兼容性比较好</i></li>
+  </h2>
+</body>
+<script>
+  const canvas = document.createElement('canvas')
+  const ctx = canvas.getContext('2d')
+  canvas.width = 140
+  canvas.height = 140
+
+  const text = '世界人民大团结万岁！'
+  ctx.font = '14px Microsoft YaHei'
+  // 根据text文字，计算文字实际宽度
+  const width = ctx.measureText(text).width
+
+  ctx.fillStyle = 'hotpink'
+  ctx.rotate(-30 * Math.PI / 180)
+
+  ctx.fillText(text, -40, 100, width)
+  ctx.textAlign = 'center'
+
+
+  document.body.style.background = `url(${canvas.toDataURL('image/png')})`
+</script>
+
+</html>

@@ -17,9 +17,11 @@
   canvas.height = 500
   const ctx = canvas.getContext('2d')
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height)
+
   ctx.fillStyle = 'skyblue'
   ctx.fillRect(0, 0, canvas.width, canvas.height)
+  // 清除画布的一部分
+  ctx.clearRect(0, 0, canvas.width / 2, canvas.height / 2)
 
   ctx.beginPath()
   ctx.moveTo(175, 75)
