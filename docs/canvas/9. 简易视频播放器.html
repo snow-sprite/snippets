@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>简易视频播放器</title>
+  <style>
+    main {
+      display: flex;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>原视频：</h2>
+  <video controls src="./assets/video.mp4"></video>
+  <h2>canvas简易视频播放器：</h2>
+  <h2>跨域的视频，使用getImageData()会报错，《 'CanvasRenderingContext2D': The canvas has been tainted by cross-origin data.
+    =》画布已经被跨源数据污染了》。正常同源环境下getImageData()得到的数据是：</h2>
+  <p>
+    Uint8ClampedArray(56320) [75, 85, 65, 255, 76, 86, 67, 255, 75, 86, 66, 255, 72, 84, 64, 255, 77, 90, 69, 255, 84,
+    98, 78, 255, 91, 106, 85, 255, 94, 109, 86, 255, 96, 112, 88, 255, 88, 104, 78, 255, 87, 102, 77, 255, 86, 99, 74,
+    255, 89, 102, 78, 255, 85, 96, 72, 255, 75, 85, 62, 255, 71, 84, 59, 255, 78, 93, 66, 255, 89, 107, 78, 255, 91,
+    109, 80, 255, 83, 99, 71, 255, 81, 96, 70, 255, 89, 102, 77, 255, 94, 108, 82, 255, 95, 108, 82, 255, 90, 101, 75,
+    255, …]
+  </p>
+  <main>
+    <canvas class="c1" width="160" height="88" style="border: 1px dotted red;"></canvas>
+    <canvas class="c2" width="160" height="88" style="border: 1px dotted red;"></canvas>
+  </main>
+</body>
+<script>
+  const video = document.querySelector('video')
+
+  const process = {}
+  process.init = function () {
+    this.canvas1 = document.querySelector('.c1')
+    this.ctx1 = this.canvas1.getContext('2d')
+
+    this.canvas2 = document.querySelector('.c2')
+    this.ctx2 = this.canvas2.getContext('2d')
+
+    this.video = video
+
+    this.video.addEventListener(
+      'play',
+      () => {
+        // 需要在视频加载完成后，设置宽高等属性！！！！！
+        this.width = video.videoWidth / 2
+        this.height = video.videoHeight / 2
+        this.timerTask()
+      },
+      false
+    )
+  }
+
+  process.timerTask = function () {
+    if (this.video.paused || this.video.ended) {
+      return
+    }
+    this.render()
+    setTimeout(() => {
+      this.timerTask()
+    }, 0)
+  }
+
+  process.render = function () {
+    this.ctx1.drawImage(this.video, 0, 0, this.width, this.height)
+
+    try {
+      const frame = this.ctx1.getImageData(0, 0, this.width, this.height)
+      const data = frame.data
+      for (let i = 0; i < data.length; i += 4) {
+        const red = data[i + 0]
+        const green = data[i + 1]
+        const blue = data[i + 2]
+
+        // 扣出出白色
+        if (red > 180 && green > 210 && blue > 200) {
+          data[i + 3] = 0
+        }
+        this.ctx2.putImageData(frame, 0, 0)
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  process.init()
+</script>
+
+</html>
