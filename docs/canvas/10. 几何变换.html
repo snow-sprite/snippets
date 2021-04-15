@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>几何变换</title>
+</head>
+
+<body>
+  <h3>平移，旋转，缩放，斜拉等</h3>
+  <canvas></canvas>
+</body>
+<script>
+  const canvas = document.querySelector('canvas')
+  const ctx = canvas.getContext('2d')
+
+  // 宽高属性
+  canvas.width = 300
+  canvas.height = 300
+
+  // 镜像渐变
+  const radialGradient = ctx.createRadialGradient(canvas.width / 2, canvas.width / 2, 0, canvas.width / 2,
+    canvas.height / 2, canvas.width / 2 - 5)
+  radialGradient.addColorStop(0, 'hotpink')
+  radialGradient.addColorStop(.5, '#b63ded')
+  radialGradient.addColorStop(1, '#ddf5ff')
+
+  ctx.fillStyle = radialGradient
+  // 绘圆
+  ctx.arc(canvas.width / 2, canvas.width / 2, 145, 0, 360 * Math.PI / 180)
+
+  // 实心填充
+  ctx.fill()
+</script>
+
+</html>
