@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>save && restore</title>
+</head>
+
+<body>
+  <li>
+    <h2>save: save方法会保存当前canvas状态作为一个layer(图层)，添加到canvas栈中</h2>
+  </li>
+  <li>
+    <h2>restore: restore方法会恢复到上一次save之前的状态，此时canvas栈会推出当前顶层的layer，然后将之前倒数第二层的layer弹到顶层。</h2>
+  </li>
+  <p>简单的说，save往栈中压入一个layer，restore推出栈中的最后一个（先入后出原则）</p>
+  <p>可以save多次，也可以restore多次，但restore次数不可大于save次数，否则引发错误</p>
+
+  <hr>
+
+  <h1>demo：</h1>
+  <ul>
+    <li style="list-style: square;">先save一下初始状态</li>
+    <li style="list-style: square;">再平移到100, 100绘制圆形渐变</li>
+    <li style="list-style: square;">再恢复到save之前的状态</li>
+    <li style="list-style: square;">绘制一个矩形</li>
+  </ul>
+  <canvas></canvas>
+</body>
+<script>
+  const canvas = document.querySelector('canvas')
+  const ctx = canvas.getContext('2d')
+  canvas.width = 500
+  canvas.height = 500
+  // 保存初始状态
+  ctx.save()
+
+  // 平移100, 100
+  ctx.translate(100, 100)
+
+  // 绘制圆形
+  const radialGradient = ctx.createRadialGradient(50, 50, 0, 50, 50, 50)
+  radialGradient.addColorStop(0, 'green')
+  radialGradient.addColorStop(.5, 'pink')
+  radialGradient.addColorStop(1, 'skyblue')
+
+  ctx.fillStyle = radialGradient
+  ctx.arc(50, 50, 50, 0, 360 * Math.PI / 180)
+  ctx.fill()
+
+  // 恢复到之前状态
+  ctx.restore()
+
+  // 绘制矩形
+  ctx.fillStyle = 'coral'
+  ctx.fillRect(20, 20, 50, 50)
+</script>
+
+</html>
