@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ctx.globalCompositeOperate</title>
+  <style>
+    div {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      min-width: 260px;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <h1>source-in</h1>
+    <h1>source-out</h1>
+    <h1>source-atop</h1>
+    <h1>destination-over</h1>
+    <h1>destination-in</h1>
+    <h1>destination-out</h1>
+    <h1>destination-atop</h1>
+    <h1>lighter</h1>
+    <h1>copy</h1>
+    <h1>xor</h1>
+    <h1>multiply</h1>
+    <h1>screen</h1>
+    <h1>overlay</h1>
+    <h1>darken</h1>
+    <h1>lighten</h1>
+    <h1>color-dodge</h1>
+    <h1>color-burn</h1>
+    <h1>hard-light</h1>
+    <h1>soft-light</h1>
+    <h1>difference</h1>
+    <h1>exclusion</h1>
+    <h1>hue</h1>
+    <h1>saturation</h1>
+    <h1>color</h1>
+    <h1>luminosity</h1>
+    <h1>source-over</h1>
+  </div>
+  <canvas style="border:1px dashed green;"></canvas>
+</body>
+<script>
+  const canvas = document.querySelector('canvas')
+  const ctx = canvas.getContext('2d')
+
+  canvas.width = 500
+  canvas.height = 500
+
+  // 放在最后不生效
+  ctx.globalCompositeOperation = 'luminosity'
+
+  ctx.fillStyle = 'blue'
+  ctx.fillRect(50, 50, 300, 300)
+
+  ctx.fillStyle = 'red'
+  ctx.fillRect(150, 150, 300, 300)
+</script>
+
+</html>

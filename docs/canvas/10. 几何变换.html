@@ -20,6 +20,8 @@
   canvas.width = 300
   canvas.height = 300
 
+  ctx.save()
+
   // 镜像渐变
   const radialGradient = ctx.createRadialGradient(canvas.width / 2, canvas.width / 2, 0, canvas.width / 2,
     canvas.height / 2, canvas.width / 2 - 5)
@@ -34,10 +36,22 @@
   // 实心填充
   ctx.fill()
 
-  // 绘制刻度
-  // for (let i = 0; i < 360; i++) {
-  //   ctx.fillRect()
-  // }
+  ctx.fillStyle = 'red'
+  ctx.translate(canvas.width / 2, canvas.height / 2)
+  // 绘制秒针刻度
+  for (let i = 0; i < 60; i++) {
+    ctx.fillRect(142, 0, 4, 4)
+    ctx.rotate(6 * Math.PI / 180)
+  }
+
+  // 绘制时钟刻度
+  for (let j = 0; j < 12; j++) {
+    ctx.fillRect(138, 0, 8, 6)
+    ctx.rotate(30 * Math.PI / 180)
+  }
+
+  // 绘制秒针
+  ctx.fillRect(0, 0, 130, 3)
 </script>
 
 </html>
