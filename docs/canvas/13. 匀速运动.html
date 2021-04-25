@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>匀速运动</title>
+</head>
+
+<body>
+  <h3>requestAnimationFrame执行机制：浏览器每次重绘之前执行，主流显示器（60HZ）每秒执行大约60次。</h3>
+  <canvas></canvas>
+</body>
+<script>
+  const canvas = document.querySelector('canvas')
+  const ctx = canvas.getContext('2d')
+
+  canvas.width = (document.documentElement || document.body).offsetWidth - 100
+  canvas.height = (document.documentElement || document.body).offsetHeight
+  canvas.style.border = '1px solid red'
+
+  // 绘制一个小球
+  const ball = {
+    x: 30,
+    y: 30,
+    vx: 8,
+    vy: 4,
+    radius: 30,
+    draw: function () {
+      // beginPath && closePath 非常重要，否则绘画会粘连
+      ctx.beginPath()
+      const linearGradient = ctx.createLinearGradient(0, canvas.height, canvas.width, 0)
+      linearGradient.addColorStop(0, 'skyblue')
+      linearGradient.addColorStop(.5, 'purple')
+      linearGradient.addColorStop(1, 'yellowgreen')
+      ctx.fillStyle = linearGradient
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      ctx.closePath()
+
+      ctx.beginPath()
+      // 两层渐变0 -> 全圆
+      const radialGrident = ctx.createRadialGradient(this.x, this.y, 0, this.x, this
+        .y, this.radius)
+      radialGrident.addColorStop(0, 'green')
+      radialGrident.addColorStop(.5, 'white')
+      radialGrident.addColorStop(1, 'hotpink')
+
+      ctx.fillStyle = radialGrident
+      ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false)
+      ctx.closePath()
+      ctx.fill()
+    }
+  }
+
+  function animation() {
+    requestAnimationFrame(animation)
+    // 清除画布
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+    // 每次重绘小球
+    ball.draw()
+
+    ball.x += ball.vx
+    ball.y += ball.vy
+
+    if (ball.x >= canvas.width - 30) {
+      ball.x = canvas.width - 30
+      ball.vx = -ball.vx
+    }
+
+    if (ball.x <= 30) {
+      ball.x = 30
+      ball.vx = -ball.vx
+    }
+
+    if (ball.y >= canvas.height - 30) {
+      ball.y = canvas.height - 30
+      ball.vy = -ball.vy
+    }
+
+    if (ball.y <= 30) {
+      ball.y = 30
+      ball.vy = -ball.vy
+    }
+  }
+
+  requestAnimationFrame(animation)
+</script>
+
+</html>
