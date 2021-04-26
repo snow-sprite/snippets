@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>小球落地回弹</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas></canvas>
+</body>
+<script>
+  let rq = null
+  let count = 0
+  const canvas = document.querySelector('canvas')
+  const ctx = canvas.getContext('2d')
+
+  canvas.width = (document.documentElement || document.body).offsetWidth
+  canvas.height = (document.documentElement || document.body).offsetHeight
+
+  // 小球
+  const ball = {
+    x: 20,
+    y: 20,
+    radius: 20,
+    vx: 0,
+    vy: 0,
+    ay: 0.8, // y轴加速度
+    ax: 3, // x轴加速度
+    draw: function () {
+      ctx.beginPath()
+      ctx.fillStyle = '#fff'
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false)
+      ctx.fill()
+      ctx.closePath()
+    }
+  }
+
+  function animate() {
+    // 放在前面，防止js报错 不再执行
+    rq = requestAnimationFrame(animate)
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.fillStyle = 'skyblue'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    ball.draw()
+
+    // 绘制轨迹
+    ball.x += ball.ax
+    ball.y += ball.ay
+
+    // x轴 加速度衰退
+    ball.ax *= 0.9
+    ball.ax += 0.6
+
+    ball.ay += 0.6
+
+    // 当小球每撞击一次底部，加速度衰退一次
+    if (ball.y + ball.radius >= canvas.height) {
+      ball.ay = -ball.ay
+      ball.ay *= 0.8
+
+      // // 暂时用次数来控制暂停时机
+      count += 1
+      if (count >= 18) {
+        ball.ay = 0
+        cancelAnimationFrame(rq)
+      }
+
+    }
+
+    // 当小球达到【右侧】边界，反弹
+    if (ball.x + ball.radius >= canvas.width) {
+      ball.ax = -ball.ax
+      // ball.ay *= 0.8
+      // ball.ax *= 0.8
+    }
+  }
+
+  rq = requestAnimationFrame(animate)
+</script>
+
+</html>
