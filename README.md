@@ -46,3 +46,25 @@
   [预览](https://snow-sprite.github.io/snippets/grid/2. fillRect.html)
   - 绘制路径
   [预览](https://snow-sprite.github.io/snippets/grid/3. 路径.html)
+  - 绘制弧度
+  [预览](https://snow-sprite.github.io/snippets/grid/4. 弧度.html)
+  - 绘制虚线
+  [预览](https://snow-sprite.github.io/snippets/grid/5. 虚线.html)
+  - 渐变
+  [预览](https://snow-sprite.github.io/snippets/grid/6. 渐变.html)
+  - 文字
+  [预览](https://snow-sprite.github.io/snippets/grid/7. 文字.html)
+  - 绘制图片
+  [预览](https://snow-sprite.github.io/snippets/grid/8. 绘制图片.html)
+  - 绘制视频
+  [预览](https://snow-sprite.github.io/snippets/grid/9. 简易视频播放器.html)
+  - 几何变换
+  [预览](https://snow-sprite.github.io/snippets/grid/10. 几何变换.html)
+  - save && restore
+  [预览](https://snow-sprite.github.io/snippets/grid/11. save && restore.html)
+  - 图形混合模式
+  [预览](https://snow-sprite.github.io/snippets/grid/12. 图形混合模式.html)
+  - 匀速运动
+  [预览](https://snow-sprite.github.io/snippets/grid/13. 匀速运动.html)
+  - 匀加速运动
+  [预览](https://snow-sprite.github.io/snippets/grid/14. 匀加速运动.html)
