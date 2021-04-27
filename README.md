@@ -66,5 +66,5 @@
   [预览](https://snow-sprite.github.io/snippets/grid/12. 图形混合模式.html)
   - 匀速运动
   [预览](https://snow-sprite.github.io/snippets/grid/13. 匀速运动.html)
-  - 匀加速运动
-  [预览](https://snow-sprite.github.io/snippets/grid/14. 匀加速运动.html)
+  - 匀减速运动
+  [预览](https://snow-sprite.github.io/snippets/grid/14. 匀减速运动.html)

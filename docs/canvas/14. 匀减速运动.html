@@ -40,6 +40,8 @@
     vy: 0,
     ay: 0.8, // y轴加速度
     ax: 3, // x轴加速度
+    direction: 1, // 正方向
+    step: 0.9, // x轴加速度衰退数值
     draw: function () {
       ctx.beginPath()
       ctx.fillStyle = '#fff'
@@ -58,35 +60,33 @@
     ball.draw()
 
     // 绘制轨迹
-    ball.x += ball.ax
+    ball.direction > 0 ? ball.x += ball.ax : ball.x -= ball.ax
     ball.y += ball.ay
 
     // x轴 加速度衰退
-    ball.ax *= 0.9
+    ball.ax *= ball.step
+    ball.step <= 0 ? ball.step = 0 : ball.step -= 0.001 * (1 - ball.step)
+    // 控制x轴 行进
     ball.ax += 0.6
-
+    // 控制y轴 行进
     ball.ay += 0.6
-
     // 当小球每撞击一次底部，加速度衰退一次
     if (ball.y + ball.radius >= canvas.height) {
       ball.ay = -ball.ay
       ball.ay *= 0.8
 
-      // // 暂时用次数来控制暂停时机
-      count += 1
-      if (count >= 18) {
-        ball.ay = 0
+      // TODO 设置小于0.8停止弹跳(step从0.9到0.8的时间里小球的运动轨迹已经很微弱了)
+      if (ball.step <= 0.8) {
         cancelAnimationFrame(rq)
       }
 
     }
 
     // 当小球达到【右侧】边界，反弹
-    if (ball.x + ball.radius >= canvas.width) {
-      ball.ax = -ball.ax
-      // ball.ay *= 0.8
-      // ball.ax *= 0.8
-    }
+    if (ball.x + ball.radius >= canvas.width) ball.direction = -1
+
+    // 小球到达【左侧】再次反弹
+    if (ball.x - ball.radius <= 0) ball.direction = 1
   }
 
   rq = requestAnimationFrame(animate)
