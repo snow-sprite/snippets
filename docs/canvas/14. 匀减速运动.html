@@ -44,7 +44,7 @@
     step: 0.9, // x轴加速度衰退数值
     draw: function () {
       ctx.beginPath()
-      ctx.fillStyle = '#fff'
+      ctx.fillStyle = 'hotpink'
       ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false)
       ctx.fill()
       ctx.closePath()
@@ -54,8 +54,13 @@
   function animate() {
     // 放在前面，防止js报错 不再执行
     rq = requestAnimationFrame(animate)
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-    ctx.fillStyle = 'skyblue'
+    /** 
+     * 这两句的作用是为运动的小球轨迹上添加一个“小尾巴”
+     * 我们绘制每一帧后，不再清除画布
+     * 每次叠加一个30%透明背景的画布
+     * 叠加多了以后 轨迹就会变短
+     * */
+    ctx.fillStyle = 'rgba(135, 206, 235, .4)'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
     ball.draw()
 
@@ -77,6 +82,10 @@
 
       // TODO 设置小于0.8停止弹跳(step从0.9到0.8的时间里小球的运动轨迹已经很微弱了)
       if (ball.step <= 0.8) {
+        // 以下3句作用是停止后在停止点重绘一个小球，目的是擦除“小尾巴”
+        ctx.fillStyle = 'rgba(135, 206, 235, 1)'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        ball.draw()
         cancelAnimationFrame(rq)
       }
 
