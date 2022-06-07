@@ -12,7 +12,7 @@
       ></span>
       <span class="record-title">屏幕录制</span>
     </div>
-    <div v-if="isSupportCameraRecord">
+    <div v-if="isSupportCameraRecord && isRecording">
       <video
         class="camera-video"
         autoplay
@@ -32,6 +32,7 @@ export default {
     return {
       isSupportScreenRecord: false,
       isSupportCameraRecord: false,
+      isStarting: false,
       isRecording: false,
       // 屏幕
       screenRecorder: null, // globally accessible
@@ -42,6 +43,7 @@ export default {
       isF1: false,
       // 结束录屏快捷键
       isF2: false,
+      messageAlert: null,
     };
   },
   mounted() {
@@ -132,32 +134,60 @@ export default {
       navigator.mediaDevices
         .getUserMedia({ audio: true, video: true })
         .then((camera) => {
+          if (this.messageAlert) {
+            this.messageAlert.close();
+          }
+          that.isStarting = false;
+          that.isRecording = true;
           that.isSupportCameraRecord = true;
-          this.cameraVideoRef = document.querySelector(".camera-video");
-          callback(camera);
+          that.$nextTick(() => {
+            that.cameraVideoRef = document.querySelector(".camera-video");
+            callback(camera);
+          });
         })
         .catch(function (error) {
+          that.isStarting = false;
+          that.isRecording = false;
           console.error(error);
           that.isSupportCameraRecord = false;
+          that.cameraVideoRef = null;
+          if (error.name != "NotFoundError") {
+            // 如果未查到音视频输入设备 无需报错
+            that.$message({
+              type: "error",
+              message: error,
+            });
+          }
+
+          if (error.name == "NotFoundError") {
+            // 如果未找到音视频输入设备 直接调起屏幕录制
+            that.recordingCamera();
+          }
         });
     },
     // 停止录制屏幕
     stopRecordingScreenCallback() {
-      let url = URL.createObjectURL(this.screenRecorder.getBlob());
-      simpleDownloadByUrl(url, "审片录制.mp4");
+      let blob = URL.createObjectURL(this.screenRecorder.getBlob());
 
+      simpleDownloadByUrl(blob, "屏幕录制");
+
+      URL.revokeObjectURL(this.screenRecorder.getBlob());
       this.screenRecorder.screen.stop();
       this.screenRecorder.destroy();
       this.screenRecorder = null;
     },
     // 停止录制音/视频
     stopRecordingAudioCallback() {
-      this.cameraVideoRef.src = this.cameraVideoRef.srcObject = null;
-      this.cameraVideoRef.muted = false;
-      this.cameraVideoRef.volume = 1;
-      this.cameraVideoRef.src = URL.createObjectURL(
-        this.cameraRecorder.getBlob()
-      );
+      this.isRecording = false;
+      if (this.cameraVideoRef) {
+        this.cameraVideoRef.src = this.cameraVideoRef.srcObject = null;
+        this.cameraVideoRef.muted = false;
+        this.cameraVideoRef.volume = 1;
+        this.cameraVideoRef.src = URL.createObjectURL(
+          this.cameraRecorder.getBlob()
+        );
+        URL.revokeObjectURL(this.cameraRecorder.getBlob());
+      }
 
       this.cameraRecorder.camera.stop();
       this.cameraRecorder.destroy();
@@ -168,8 +198,9 @@ export default {
       this.invokeGetDisplayMedia(
         (screen) => {
           this.addStreamStopListener(screen, () => {
-            console.log("停止录制");
             that.isRecording = false;
+            // 取消之后也要关闭录制
+            that.stopRecord();
           });
           that.isRecording = true;
           callback(screen);
@@ -177,59 +208,77 @@ export default {
         (error) => {
           console.error(error);
           that.isRecording = false;
-          if (error.name !== "NotAllowedError") {
-            that.$message({
-              type: "error",
-              message: error,
-            });
-          }
+          // 报错之后也要关闭录制
+          that.stopRecord();
+          that.$message({
+            type: "error",
+            message: error,
+          });
         }
       );
     },
     startRecord() {
-      // 开始录制屏幕
-      this.captureScreen((screen) => {
-        this.screenRecorder = RecordRTC(screen, {
-          type: "video",
-        });
-
-        this.screenRecorder.startRecording();
-
-        // release screen on stopRecording
-        this.screenRecorder.screen = screen;
-        console.log("start", this.screenRecorder);
-      });
       // 开始录制音/视频
       this.captureCamera((camera) => {
-        this.cameraVideoRef.muted = true;
-        this.cameraVideoRef.volume = 0;
-        this.cameraVideoRef.srcObject = camera;
+        if (this.cameraVideoRef) {
+          this.cameraVideoRef.muted = true;
+          this.cameraVideoRef.volume = 0;
+          this.cameraVideoRef.srcObject = camera;
+        }
 
         this.cameraRecorder = RecordRTC(camera, {
           type: "video",
+          disableLogs: true,
         });
         this.cameraRecorder.startRecording();
         // release camera on stopRecording
         this.cameraRecorder.camera = camera;
+
+        //! 因为调用摄像头会有延迟 所以在调起摄像头之后才开始调用屏幕录制
+        this.recordingCamera();
+      });
+    },
+    recordingCamera() {
+      this.captureScreen((screen) => {
+        this.screenRecorder = RecordRTC(screen, {
+          type: "video",
+          mimeType: "video/webm",
+          timeSlice: 1000,
+          bufferSize: 16384,
+          disableLogs: true,
+        });
+
+        this.screenRecorder.startRecording();
+        // release screen on stopRecording
+        this.screenRecorder.screen = screen;
       });
     },
     stopRecord() {
       if (this.screenRecorder) {
-        console.log("11");
-
         this.screenRecorder.stopRecording(this.stopRecordingScreenCallback);
       }
       if (this.cameraRecorder) {
-        console.log("22");
-
         this.cameraRecorder.stopRecording(this.stopRecordingAudioCallback);
       }
     },
     toggleRecord() {
-      if (this.isRecording) {
-        this.stopRecord();
-      } else {
+      if (!this.isRecording) {
+        if (this.isStarting) {
+          if (this.messageAlert) {
+            this.messageAlert.close();
+            this.messageAlert = null;
+          }
+          this.messageAlert = this.$message({
+            type: "info",
+            message: "正在调用摄像头，请稍后..",
+          });
+          return;
+        }
+
+        this.isStarting = true;
         this.startRecord();
+      } else {
+        this.stopRecord();
       }
     },
     handleMouseDown(e) {
@@ -294,7 +343,7 @@ export default {
         }
       } else {
         if (event.keyCode == 112) {
-          this.startRecord();
+          this.toggleRecord();
         } else if (event.keyCode == 113) {
           this.stopRecord();
         }
@@ -322,21 +371,25 @@ body {
     top: 0;
     display: flex;
     justify-content: space-around;
-    color: #333;
+    color: #7a7a7a;
     z-index: 100;
     width: 90px;
     height: 40px;
-    border-radius: 16px;
+    border-radius: 0 16px 16px 0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 6px rgba(0, 0, 0, 0.04);
     background: #fff;
     font-size: 14px;
     padding: 5px;
     box-sizing: border-box;
-    transition: left 0.2s linear, opacity 0.2s linear;
-    opacity: 0.6;
+    transition: left 0.2s linear, opacity 0.2s linear, background 0.2s linear,
+      color 0.2s linear;
+    opacity: 0.4;
+    border: 1px solid #858585;
     &:hover {
-      left: 2px;
+      left: 0px;
       opacity: 1;
+      background: #fff;
+      color: #333;
     }
   }
   .play-pause {
@@ -353,7 +406,6 @@ body {
     width: 30px;
     text-align: center;
     line-height: 1;
-    padding-top: 2px;
   }
 }
 .camera-video {
