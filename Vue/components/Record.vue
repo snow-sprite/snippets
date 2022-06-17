@@ -12,7 +12,10 @@
       ></span>
       <span class="record-title">屏幕录制</span>
     </div>
-    <div v-if="isSupportCameraRecord && isRecording">
+    <div
+      v-if="isSupportCameraRecord && isRecording"
+      class="camera-video-wrapper"
+    >
       <video
         class="camera-video"
         autoplay
@@ -26,7 +29,9 @@
 
 <script>
 import RecordRTC from "recordrtc";
-import { simpleDownloadByUrl } from "@/utils/download";
+import { saveBlobFileToDisk } from "@/utils/download";
+import { getFileName } from "@/utils/util";
+
 export default {
   data() {
     return {
@@ -36,14 +41,17 @@ export default {
       isRecording: false,
       // 屏幕
       screenRecorder: null, // globally accessible
-      // 音视频
+      // 视频
       cameraVideoRef: null,
       cameraRecorder: null,
+      // 音频
+      microphoneRecorder: null,
       // 录屏快捷键
       isF1: false,
       // 结束录屏快捷键
       isF2: false,
       messageAlert: null,
+      isRecordingScreen: false,
     };
   },
   mounted() {
@@ -73,12 +81,16 @@ export default {
           logicalSurface: true,
           cursor: "always", // never, always, motion
         },
+        audio: true,
       };
 
       // above constraints are NOT supported YET
       // that's why overriding them
       displaymediastreamconstraints = {
         video: true,
+        // 加了此属性 会捕获屏幕中播放的声音（如视频原声）
+        // 详见：https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+        audio: true,
       };
 
       if (navigator.mediaDevices.getDisplayMedia) {
@@ -129,10 +141,14 @@ export default {
         );
       });
     },
+    // 捕获摄像头视频
     captureCamera(callback) {
       let that = this;
       navigator.mediaDevices
-        .getUserMedia({ audio: true, video: true })
+        .getUserMedia({
+          video: true,
+          // audio: true,
+        })
         .then((camera) => {
           if (this.messageAlert) {
             this.messageAlert.close();
@@ -160,38 +176,73 @@ export default {
           }
 
           if (error.name == "NotFoundError") {
-            // 如果未找到音视频输入设备 直接调起屏幕录制
+            // 如果未找到视频输入设备 尝试调起麦克风
+            that.recordeMicrophone();
+          }
+        });
+    },
+    // 捕获音频输入源
+    captureMicrophone(callback) {
+      let that = this;
+      navigator.mediaDevices
+        .getUserMedia({
+          // video: true,
+          audio: true,
+        })
+        .then((microphone) => {
+          callback(microphone);
+        })
+        .catch(function (error) {
+          if (error.name != "NotFoundError") {
+            // 如果未查到音视频输入设备 无需报错
+            that.$message({
+              type: "error",
+              message: error,
+            });
+          }
+
+          if (error.name == "NotFoundError") {
+            // 如果未找到音频输入设备 直接调起屏幕
             that.recordingCamera();
           }
         });
     },
     // 停止录制屏幕
     stopRecordingScreenCallback() {
-      let blob = URL.createObjectURL(this.screenRecorder.getBlob());
+      let allBlobs = this.screenRecorder.getBlob();
 
-      simpleDownloadByUrl(blob, "屏幕录制");
+      let finalFile = new File([allBlobs], getFileName("mp4"), {
+        type: "video/webm;codecs=h264",
+      });
 
-      URL.revokeObjectURL(this.screenRecorder.getBlob());
+      saveBlobFileToDisk(finalFile, "屏幕录制", "mp4");
+
       this.screenRecorder.screen.stop();
       this.screenRecorder.destroy();
       this.screenRecorder = null;
     },
-    // 停止录制音/视频
-    stopRecordingAudioCallback() {
+    // 停止录制视频
+    stopRecordingCameraCallback() {
+      let cameraBlob = this.cameraRecorder.getBlob();
       this.isRecording = false;
       if (this.cameraVideoRef) {
         this.cameraVideoRef.src = this.cameraVideoRef.srcObject = null;
         this.cameraVideoRef.muted = false;
         this.cameraVideoRef.volume = 1;
-        this.cameraVideoRef.src = URL.createObjectURL(
-          this.cameraRecorder.getBlob()
-        );
-        URL.revokeObjectURL(this.cameraRecorder.getBlob());
+        this.cameraVideoRef.src = URL.createObjectURL(cameraBlob);
       }
 
+      URL.revokeObjectURL(cameraBlob);
       this.cameraRecorder.camera.stop();
       this.cameraRecorder.destroy();
       this.cameraRecorder = null;
+    },
+    // 停止录制麦克风
+    stopRecordingMicrophoneCallback() {
+      if (this.microphoneRecorder) {
+        this.microphoneRecorder.destroy();
+        this.microphoneRecorder = null;
+      }
     },
     captureScreen(callback) {
       let that = this;
@@ -218,7 +269,7 @@ export default {
       );
     },
     startRecord() {
-      // 开始录制音/视频
+      // 开始录制视频
       this.captureCamera((camera) => {
         if (this.cameraVideoRef) {
           this.cameraVideoRef.muted = true;
@@ -235,30 +286,71 @@ export default {
         this.cameraRecorder.camera = camera;
 
         //! 因为调用摄像头会有延迟 所以在调起摄像头之后才开始调用屏幕录制
-        this.recordingCamera();
+        this.recordeMicrophone();
       });
     },
-    recordingCamera() {
-      this.captureScreen((screen) => {
-        this.screenRecorder = RecordRTC(screen, {
+    recordeMicrophone() {
+      // 开始录制音频
+      this.captureMicrophone((microphoneStream) => {
+        if (this.microphoneRecorder) {
+          this.microphoneRecorder.destroy();
+          this.microphoneRecorder = null;
+        }
+        this.microphoneRecorder = RecordRTC(microphoneStream, {
+          type: "audio",
+          mimeType: "audio/webm",
+          sampleRate: 44100,
+          recorderType: RecordRTC.StereoAudioRecorder,
+          numberOfAudioChannels: 1,
+          desiredSampRate: 16000,
+          disableLogs: true,
+        });
+        this.microphoneRecorder.startRecording();
+        //! 因为调用摄像头会有延迟 所以在调起音频之后才开始调用屏幕录制
+        this.recordingCamera(microphoneStream);
+      });
+    },
+    recordingCamera(microphoneStream) {
+      if (this.isRecordingScreen) return;
+      // 表明已经开始录屏了
+      this.isRecordingScreen = true;
+
+      var finalStream = new MediaStream();
+      if (microphoneStream) {
+        this.getTracks(microphoneStream, "audio").forEach(function (track) {
+          finalStream.addTrack(track);
+        });
+      }
+
+      this.captureScreen((screenStream) => {
+        this.getTracks(screenStream, "video").forEach(function (track) {
+          finalStream.addTrack(track);
+        });
+        this.screenRecorder = RecordRTC(finalStream, {
           type: "video",
-          mimeType: "video/webm",
+          mimeType: "video/webm;codecs=h264",
           timeSlice: 1000,
           bufferSize: 16384,
           disableLogs: true,
         });
 
         this.screenRecorder.startRecording();
-        // release screen on stopRecording
-        this.screenRecorder.screen = screen;
+        // 暂存一下视频
+        this.screenRecorder.screen = finalStream;
       });
     },
     stopRecord() {
+      this.isRecordingScreen = false;
       if (this.screenRecorder) {
         this.screenRecorder.stopRecording(this.stopRecordingScreenCallback);
       }
       if (this.cameraRecorder) {
-        this.cameraRecorder.stopRecording(this.stopRecordingAudioCallback);
+        this.cameraRecorder.stopRecording(this.stopRecordingCameraCallback);
+      }
+      if (this.microphoneRecorder) {
+        this.microphoneRecorder.stopRecording(
+          this.stopRecordingMicrophoneCallback
+        );
       }
     },
     toggleRecord() {
@@ -281,8 +373,18 @@ export default {
         this.stopRecord();
       }
     },
+    getTracks(stream, kind) {
+      if (!stream || !stream.getTracks) {
+        return [];
+      }
+
+      return stream.getTracks().filter(function (t) {
+        return t.kind === (kind || "audio");
+      });
+    },
     handleMouseDown(e) {
-      let box = document.querySelector(".camera-video");
+      // 拖拽移动摄像头
+      let box = document.querySelector(".camera-video-wrapper");
       let disx = e.pageX - box.offsetLeft,
         disy = e.pageY - box.offsetTop,
         documentEle = document.documentElement || document.body;
@@ -383,7 +485,7 @@ body {
     box-sizing: border-box;
     transition: left 0.2s linear, opacity 0.2s linear, background 0.2s linear,
       color 0.2s linear;
-    opacity: 0.4;
+    opacity: 0.6;
     border: 1px solid #858585;
     &:hover {
       left: 0px;
@@ -408,13 +510,23 @@ body {
     line-height: 1;
   }
 }
-.camera-video {
+.camera-video-wrapper {
   position: fixed;
-  width: 150px;
-  height: 150px;
   left: 0;
   top: 55px;
   border-radius: 50%;
   border: 1px solid #{var(--box-border)};
+  z-index: 99;
+  width: 130px;
+  height: 130px;
+  overflow: hidden;
+
+  .camera-video {
+    width: auto;
+    height: 100%;
+    cursor: move;
+    position: relative;
+    left: calc(50% - 115px);
+  }
 }
 </style>
