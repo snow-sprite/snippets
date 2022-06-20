@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>subtitles</title>
+</head>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+  }
+  ul {
+    position: relative;
+    list-style: none;
+    margin: 50px 50px;
+    height: 40px;
+    line-height: 40px;
+    letter-spacing: 6px;
+    overflow: hidden;
+  }
+  ul li {
+    position: absolute;
+    font-size: 26px;
+    word-break: break-all;
+    animation-play-state: running;
+  }
+  @keyframes imgToggle {
+    0%,75%,100% {
+        width: 0;
+        opacity: 0
+    }
+
+    76%,99% {
+        opacity: 1
+    }
+
+    85%,95% {
+        width: 100%;
+        opacity: 1
+    }
+}
+  .one {
+        animation: imgToggle 24s -18s linear infinite;
+  }
+  .two {
+        animation: imgToggle 24s -12s linear infinite;
+  }
+  .three {
+        animation: imgToggle 24s -6s linear infinite;
+  }
+  .four {
+        animation: imgToggle 24s 0s linear infinite;
+  }
+</style>
+<body>
+  <ul>
+    <li class="one">
+      喜欢的东西依旧喜欢，但可以不拥有
+    </li>
+    <li class="two">
+      讨厌的东西依旧讨厌，但可以忍受
+    </li>
+    <li class="three">
+      害怕的东西依旧害怕，但可以面对
+    </li>
+    <li class="four">
+      以前觉得难以理喻的事情，可以理所当然
+    </li>
+  </ul>
+</body>
+</html>
