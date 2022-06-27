@@ -13,16 +13,41 @@
       <span class="record-title">屏幕录制</span>
     </div>
     <div
-      v-if="isSupportCameraRecord && isRecording"
       class="camera-video-wrapper"
+      v-if="isSupportCameraRecord && isRecording"
     >
       <video
         class="camera-video"
         autoplay
+        loop
         playsinline
         @mousedown="handleMouseDown"
         @mouseup="handleMouseUp"
       ></video>
+      <div class="came-full-box">
+        <span
+          class="came-full-btn el-icon-full-screen"
+          @click="setBigCamera"
+        ></span>
+      </div>
+    </div>
+    <!-- camera fullscreen -->
+    <div class="camera-fullwrapper" v-show="isFullCamera">
+      <span
+        class="el-icon-close fz24 close-icon fr"
+        @click.stop="hideFullCamera"
+      ></span>
+      <div class="camera-container">
+        <video
+          class="camera-instance"
+          :style="{ left: cameraLeft }"
+          autoplay
+          loop
+          playsinline
+          @mousedown="handleMouseDown"
+          @mouseup="handleMouseUp"
+        ></video>
+      </div>
     </div>
   </div>
 </template>
@@ -43,6 +68,8 @@ export default {
       screenRecorder: null, // globally accessible
       // 视频
       cameraVideoRef: null,
+      // 全屏摄像头视频
+      cameraBigVideoRef: null,
       cameraRecorder: null,
       // 音频
       microphoneRecorder: null,
@@ -52,6 +79,9 @@ export default {
       isF2: false,
       messageAlert: null,
       isRecordingScreen: false,
+      isFullCamera: false,
+      cameraLeft: 0,
+      cameraStream: null,
     };
   },
   mounted() {
@@ -167,15 +197,28 @@ export default {
           console.error(error);
           that.isSupportCameraRecord = false;
           that.cameraVideoRef = null;
-          if (error.name != "NotFoundError") {
+          if (
+            error.name == "NotFoundError" ||
+            error.name == "NotAllowedError"
+          ) {
             // 如果未查到音视频输入设备 无需报错
+            // that.$message({
+            //   type: "error",
+            //   message: `未捕获到摄像头或没有摄像头访问权限`,
+            //   duration: 3000,
+            // });
+          } else {
             that.$message({
               type: "error",
-              message: error,
+              message: `摄像头调用失败，${error.message}`,
+              duration: 3000,
             });
           }
 
-          if (error.name == "NotFoundError") {
+          if (
+            error.name == "NotFoundError" ||
+            error.name == "NotAllowedError"
+          ) {
             // 如果未找到视频输入设备 尝试调起麦克风
             that.recordeMicrophone();
           }
@@ -193,16 +236,30 @@ export default {
           callback(microphone);
         })
         .catch(function (error) {
-          if (error.name != "NotFoundError") {
+          console.error(error);
+          if (
+            error.name == "NotFoundError" ||
+            error.name == "NotAllowedError"
+          ) {
             // 如果未查到音视频输入设备 无需报错
+            // that.$message({
+            //   type: "error",
+            //   message: `未捕获到麦克风或没有麦克风访问权限`,
+            //   duration: 3000,
+            // });
+          } else {
             that.$message({
               type: "error",
-              message: error,
+              message: `麦克风调用失败，${error.message}～`,
+              duration: 3000,
             });
           }
 
-          if (error.name == "NotFoundError") {
-            // 如果未找到音频输入设备 直接调起屏幕
+          if (
+            error.name == "NotFoundError" ||
+            error.name == "NotAllowedError"
+          ) {
+            // 如果未找到音频输入设备 或 无访问权限 直接调起屏幕
             that.recordingCamera();
           }
         });
@@ -231,6 +288,17 @@ export default {
         this.cameraVideoRef.volume = 1;
         this.cameraVideoRef.src = URL.createObjectURL(cameraBlob);
       }
+
+      if (this.cameraBigVideoRef) {
+        this.cameraBigVideoRef.src = this.cameraBigVideoRef.srcObject = null;
+        this.cameraVideoRef.muted = false;
+        this.cameraVideoRef.volume = 1;
+      }
+
+      // 如果开启了摄像头大形态 关闭大摄像头弹窗
+      this.isFullCamera = false;
+      // 同时清除摄像头流信息
+      this.cameraStream = null;
 
       URL.revokeObjectURL(cameraBlob);
       this.cameraRecorder.camera.stop();
@@ -261,10 +329,15 @@ export default {
           that.isRecording = false;
           // 报错之后也要关闭录制
           that.stopRecord();
-          that.$message({
-            type: "error",
-            message: error,
-          });
+          if (
+            error.name != "NotAllowedError" &&
+            error.name != "NotFoundError"
+          ) {
+            that.$message({
+              type: "error",
+              message: `录制屏幕出错，${error.message}`,
+            });
+          }
         }
       );
     },
@@ -275,6 +348,8 @@ export default {
           this.cameraVideoRef.muted = true;
           this.cameraVideoRef.volume = 0;
           this.cameraVideoRef.srcObject = camera;
+          // 保存一下摄像头流 给放大摄像头后的视频用
+          this.cameraStream = camera;
         }
 
         this.cameraRecorder = RecordRTC(camera, {
@@ -451,6 +526,31 @@ export default {
         }
       }
     },
+
+    setBigCamera() {
+      this.isFullCamera = true;
+      this.$nextTick(() => {
+        this.cameraBigVideoRef = document.querySelector(".camera-instance");
+        // 将小摄像头流文件赋值到此大摄像头
+        this.cameraBigVideoRef.muted = true;
+        this.cameraBigVideoRef.volume = 0;
+        this.cameraBigVideoRef.srcObject = this.cameraStream;
+
+        // 根据auto宽 设置摄像头位置
+        // TODO 100ms后执行是因为 获取到的offsetWidth与实际显示有出入 导致css样式错乱 摄像头圆形区域内不能填充 待解决
+        setTimeout(() => {
+          if (this.cameraBigVideoRef) {
+            this.cameraLeft = `calc(50% - ${
+              this.cameraBigVideoRef.offsetWidth / 2
+            }px)`;
+          }
+        }, 100);
+      });
+    },
+    // 隐藏全屏摄像头
+    hideFullCamera() {
+      this.isFullCamera = false;
+    },
   },
 };
 </script>
@@ -522,11 +622,88 @@ body {
   overflow: hidden;
 
   .camera-video {
-    width: auto;
+    width: 230px;
     height: 100%;
     cursor: move;
     position: relative;
     left: calc(50% - 115px);
   }
+  &:hover {
+    .came-full-box::before {
+      display: block;
+    }
+    .came-full-btn {
+      display: inline-block;
+    }
+  }
+  .came-full-box {
+    width: 100%;
+    height: 25px;
+    position: relative;
+    bottom: 28px;
+    left: 0px;
+    text-align: center;
+    line-height: 28px;
+    transition: all 0.3s ease 1s;
+    &::before {
+      display: none;
+      content: "";
+      width: 100%;
+      height: 30px;
+      position: absolute;
+      border-radius: 10px;
+      bottom: 0px;
+      left: 0;
+      background: linear-gradient(
+        rgba(248, 248, 248, 0),
+        25%,
+        rgba(0, 0, 0, 0.8)
+      );
+      transition: all 0.3s ease 0s;
+      z-index: 1;
+    }
+  }
+
+  .came-full-btn {
+    position: relative;
+    z-index: 2;
+    display: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #979797;
+    transition: all 0.3s ease 1s;
+  }
+}
+.camera-fullwrapper {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 99;
+  background: rgba(0, 0, 0, 0.9);
+  .camera-container {
+    height: 100vh;
+    width: 100vh;
+    margin: 0 auto;
+    border-radius: 50%;
+    overflow: hidden;
+    .camera-instance {
+      position: relative;
+      top: 0;
+      height: 100%;
+      width: auto;
+    }
+  }
+}
+.fz24 {
+  font-size: 24px;
+}
+.close-icon {
+  position: relative;
+  top: 10px;
+  right: 20px;
+  cursor: pointer;
 }
 </style>
