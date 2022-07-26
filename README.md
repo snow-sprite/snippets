@@ -7,24 +7,6 @@
   - components
     - Sign.vue; // Canvas 签名
     - Record.vue // 录屏（包括摄像头、音频）
-      使用:
-    ```javascript
-      <body>
-        <div class="recordContain unselect">
-          <Record></Record>
-        </div>
-      </body>
-      <style lang="scss" scoped>
-        body {
-          position: relative;
-          .recordContain {
-            position: absolute;
-            left: 0;
-            top: 100px;
-          }
-        }
-      </style>
-    ```
   - directives
     ```
     longPress.ts // 长按(v-long-press="fn" or <with param>: v-long-press="() => fn(param)")
@@ -58,6 +40,12 @@
 
   - buttons 按钮样式效果
     [预览](https://snow-sprite.github.io/snippets/css-effects/buttons-effect.html)
+
+  - 漂亮的渐变色背景动态变换; 
+    [预览](https://snow-sprite.github.io/snippets/css-effects/animate-bg.html)
+
+  - 滚动字幕; 
+    [预览](https://snow-sprite.github.io/snippets/css-effects/scrolling-marquee.html)
 
 - canvas
   - 绘制矩形 // strokeRect 无填充

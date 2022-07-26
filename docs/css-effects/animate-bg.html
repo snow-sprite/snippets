@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>漂亮的渐变色背景动态变换</title>
+  </head>
+  <body>
+    <div></div>
+  </body>
+  <style>
+    div {
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(
+        127deg,
+        #1fd2a4,
+        #e6e87d,
+        #ea9b6e,
+        #ea746e,
+        #ffb28f,
+        #e6e87d,
+        #ea9b6e,
+        #ea746e,
+        #6ea2ea,
+        #50e3a3,
+        #828de3,
+        #ea746e
+      );
+      background-size: 1800% 1800%;
+      animation: AnimationName 60s ease infinite;
+    }
+    @keyframes AnimationName {
+      0% {
+        background-position: 0% 10%;
+      }
+      50% {
+        background-position: 100% 91%;
+      }
+      100% {
+        background-position: 0% 10%;
+      }
+    }
+  </style>
+</html>
