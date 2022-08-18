@@ -76,3 +76,5 @@
     [预览](https://snow-sprite.github.io/snippets/canvas/13.匀速运动.html)
   - 匀减速运动
     [预览](https://snow-sprite.github.io/snippets/canvas/14.匀减速运动.html)
+  - canvas特效 大海里的飞鱼
+    [预览](https://snow-sprite.github.io/snippets/canvas/fish.html)
