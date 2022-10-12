@@ -54,9 +54,6 @@
 
 <script>
 import RecordRTC from "recordrtc";
-import { saveBlobFileToDisk } from "@/utils/download";
-import { getFileName } from "@/utils/util";
-
 export default {
   data() {
     return {
@@ -94,14 +91,14 @@ export default {
   methods: {
     setRecord() {
       if (
-        !navigator.getDisplayMedia &&
-        !navigator.mediaDevices.getDisplayMedia
+        navigator.getDisplayMedia ||
+        (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia)
       ) {
-        var error = "您的浏览器不支持录屏。";
-        this.isSupportScreenRecord = false;
-        throw new Error(error);
-      } else {
         this.isSupportScreenRecord = true;
+      } else {
+        var error = "您当前的浏览器环境不支持录屏。";
+        this.isSupportScreenRecord = false;
+        console.error(error);
       }
     },
     invokeGetDisplayMedia(success, error) {
@@ -123,7 +120,7 @@ export default {
         audio: true,
       };
 
-      if (navigator.mediaDevices.getDisplayMedia) {
+      if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
         navigator.mediaDevices
           .getDisplayMedia(displaymediastreamconstraints)
           .then(success)
@@ -247,6 +244,8 @@ export default {
             //   message: `未捕获到麦克风或没有麦克风访问权限`,
             //   duration: 3000,
             // });
+            // 如果未找到音频输入设备 或 无访问权限 直接调起屏幕
+            that.recordingCamera();
           } else {
             that.$message({
               type: "error",
@@ -254,29 +253,18 @@ export default {
               duration: 3000,
             });
           }
-
-          if (
-            error.name == "NotFoundError" ||
-            error.name == "NotAllowedError"
-          ) {
-            // 如果未找到音频输入设备 或 无访问权限 直接调起屏幕
-            that.recordingCamera();
-          }
         });
     },
     // 停止录制屏幕
     stopRecordingScreenCallback() {
       let allBlobs = this.screenRecorder.getBlob();
-
-      let finalFile = new File([allBlobs], getFileName("mp4"), {
-        type: "video/webm;codecs=h264",
+      // 解决本地播放器无法快进快退问题 https://github.com/muaz-khan/RecordRTC/blob/master/simple-demos/seeking-workaround.html
+      RecordRTC.getSeekableBlob(allBlobs, (seekableBlob) => {
+        this.screenRecorder.screen.stop();
+        this.screenRecorder.destroy();
+        this.screenRecorder = null;
+        RecordRTC.invokeSaveAsDialog(seekableBlob, "屏幕录制.webm");
       });
-
-      saveBlobFileToDisk(finalFile, "屏幕录制", "mp4");
-
-      this.screenRecorder.screen.stop();
-      this.screenRecorder.destroy();
-      this.screenRecorder = null;
     },
     // 停止录制视频
     stopRecordingCameraCallback() {
@@ -373,7 +361,7 @@ export default {
         }
         this.microphoneRecorder = RecordRTC(microphoneStream, {
           type: "audio",
-          mimeType: "audio/webm",
+          mimeType: "audio/webm;codecs=pcm",
           sampleRate: 44100,
           recorderType: RecordRTC.StereoAudioRecorder,
           numberOfAudioChannels: 1,
@@ -403,9 +391,10 @@ export default {
         });
         this.screenRecorder = RecordRTC(finalStream, {
           type: "video",
-          mimeType: "video/webm;codecs=h264",
+          mimeType: "video/mp4",
           timeSlice: 1000,
           bufferSize: 16384,
+          recorderType: RecordRTC.MediaStreamRecorder,
           disableLogs: true,
         });
 
