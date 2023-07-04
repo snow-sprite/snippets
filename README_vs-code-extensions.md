@@ -1,6 +1,6 @@
 ## 我的 vscode 常用插件
 
-- dark
+- dart
 - flutter
 - waketime
 - Atom One Dark Theme
