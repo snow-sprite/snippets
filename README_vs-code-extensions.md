@@ -1,0 +1,47 @@
+## 我的 vscode 常用插件
+
+- dark
+- flutter
+- waketime
+- Atom One Dark Theme
+- uto Close Tag
+- Auto Rename Tag
+- beautify
+- color info
+- color picker
+- css-auto-prefix
+- dev containers
+- document this
+- dotenv
+- error lens
+- es6-string-html
+- eslint
+- file-icons
+- filesize
+- gitlens-git supercharged
+- html boilerplate
+- html snippets
+- htmlhint
+- import cost
+- indent-rainbow
+- path intellisense
+- prettier - code formatter
+- settings sync
+- sftp
+- svg viewer
+- todo
+- todo tree
+- typescript vue plugin(volor)
+- vscode-icons
+- vue language features(volor)
+- bracket pair colorizer
+- easy sass
+- korofileheader
+- vetur
+- weixin cloudbbase docker extension
+- wsl
+- python
+- pylance
+- docker
+- autopep8
+- flake8
